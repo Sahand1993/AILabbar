@@ -1,3 +1,5 @@
+// Written by Sahand Zarrinkoub and Shahin Saleh
+
 package hmm1;
 import hmm0.MainHmm0;
 
@@ -5,15 +7,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class MainHmm1 extends MainHmm0 {
-    static float[][] A;
+    public static float[][] A;
     static float[][] B;
     static float[][] pi;
-    static int[] O;
-    static BufferedReader br;
+    public static int[] O;
+    public static BufferedReader br;
 
     public static void main(String[] args) {
         br = new BufferedReader(new InputStreamReader(System.in));
-        main(new String[] {});
         readInput();
 
         float[][] alpha1 = vectorMul(transpose(pi), extractColumn(B, O[0]));
@@ -90,4 +91,6 @@ public class MainHmm1 extends MainHmm0 {
         }
         System.out.println();
     }
+
+
 }

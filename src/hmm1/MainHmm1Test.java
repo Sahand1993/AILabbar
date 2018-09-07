@@ -25,7 +25,7 @@ class MainHmm1Test {
     void readInput() {
         MainHmm1 main = new MainHmm1();
 
-        String fileName = "/Users/ishahin/IdeaProjects/AILabbar/src/hmm1/samples/hmm2_01.in";
+        String fileName = "src/hmm1/samples/hmm2_01.in";
 
         FileInputStream is = null;
 
@@ -33,46 +33,6 @@ class MainHmm1Test {
             is = new FileInputStream(fileName);
             System.setIn(is);
             main.main(new String[] {});
-            main.readInput();
-
-            System.out.println("This is the A matrix");
-            printMatrix(main.A);
-
-            System.out.println("This is the B matrix");
-            printMatrix(main.B);
-
-            System.out.println("This is the pi matrix");
-            printMatrix(transpose(main.pi));
-
-            System.out.println("This is the Emission matrix");
-            printVector(main.O);
-
-            /*
-            TESTING
-             */
-            float[][] alphaA;
-            float[][] alpha = main.vectorMul(transpose(main.pi), main.extractColumn(main.B, main.O[0]));
-            System.out.println("This is ALpha before the loop");
-            printMatrix(alpha);
-            for (int i = 1; i < main.O.length; i++) {
-
-                alphaA = MainHmm0.matrixMul(transpose(alpha), main.A);
-                printMatrix(alphaA);
-                System.out.println();
-                alpha = main.vectorMul(transpose(alphaA), main.extractColumn(main.B, main.O[i]));
-                printMatrix(alpha);
-                System.out.println();
-
-                //System.out.println("This is Alpha in the loop");
-                //printMatrix(alpha);
-            }
-            System.out.println("This is Alpha after the loop");
-            printMatrix(alpha);
-            float ans = main.sumMatrix(alpha);
-            System.out.println("This should be the answer");
-            System.out.println(ans);
-
-
 
         } catch (IOException e){
             e.printStackTrace();
