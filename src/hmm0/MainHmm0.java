@@ -85,7 +85,7 @@ public class MainHmm0 {
         }
     }
 
-    public String[] nextLineSplit(BufferedReader br){
+    public static String[] nextLineSplit(BufferedReader br){
         try {
             String inputString = br.readLine();
             String[] inputElems = inputString.split(" ");
@@ -97,7 +97,7 @@ public class MainHmm0 {
         }
     }
 
-    public float[][] parseArrayToMatrix(String[] arr) {
+    public static float[][] parseArrayToMatrix(String[] arr) {
         int rows = Integer.parseInt(arr[0]);
         int cols = Integer.parseInt(arr[1]);
 
@@ -112,7 +112,7 @@ public class MainHmm0 {
         return res;
     }
 
-    public int[] parseArrayToVector(String[] arr) {
+    public static int[] parseArrayToVector(String[] arr) {
         int noOfVals = Integer.parseInt(arr[0]);
 
         int[] res = new int[noOfVals];
