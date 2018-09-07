@@ -132,9 +132,7 @@ public class MainHmm0 {
                 for (int k = 0; k < a[0].length; k++) {
                     res[i][j] += a[i][k] * b[k][j];
                 }
-                //System.out.printf("%f", res[i][j]);
             }
-            //System.out.println();
         }
         return res;
     }
