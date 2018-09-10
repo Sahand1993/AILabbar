@@ -19,6 +19,8 @@ public class MainHmm2 extends MainHmm1 {
 
         fillDelta();
 
+        findSequence(); // This should output the most probably sequence of states
+
     }
 
     /**
@@ -71,8 +73,8 @@ public class MainHmm2 extends MainHmm1 {
     /**
      * Finds the most likely path by backtracking in deltaIndex.
      */
-    public void findSequence(){
-
+    public static void findSequence(){
+        
     }
 
     private static class FloatInt {
