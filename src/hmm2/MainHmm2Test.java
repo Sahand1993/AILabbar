@@ -31,8 +31,8 @@ class MainHmm2Test {
             is = new FileInputStream(fileName);
             System.setIn(is);
             main.main(new String[] {});
+
             main.printMatrix(main.delta);
-            main.printMatrix(main.deltaIndex);
         } catch (IOException e) {
             e.printStackTrace();
         }
