@@ -9,15 +9,12 @@ import java.util.List;
 
 public class MainHmm2 extends MainHmm1 {
 
-    static float[][] delta;
+    static double[][] delta;
     static int[][] deltaIndex;
 
     public static void main(String[] args){
         br = new BufferedReader(new InputStreamReader(System.in));
         readInput();
-
-        delta = new float[A.length][O.length];
-        deltaIndex = new int[A.length][O.length];
 
         fillDelta();
 
@@ -28,24 +25,27 @@ public class MainHmm2 extends MainHmm1 {
      * Fills delta and deltaIndex matrices with probabilities.
      */
     public static void fillDelta(){
+        delta = new double[A.length][O.length];
+        deltaIndex = new int[A.length][O.length];
+
         firstColDelta();
 
-        float[] probs;
+        double[] probs;
         // For each timestep t
         for(int t = 1; t < O.length; t++) {
       //      System.out.println(t);
             // For each possible state at t
             for(int i = 0; i < A.length; i++) {
          //       System.out.println(" " + i);
-                probs = new float[A.length];
+                probs = new double[A.length];
                 // For each possible state at t - 1
                 for(int j = 0; j < A.length; j++) {
                     probs[j] = delta[j][t - 1] * A[j][i] * B[i][O[t]];
 //                    System.out.printf("  %f * %f * %f = %f\n", delta[j][t - 1], A[j][i], B[i][O[t]], probs[j]);
                 }
-                FloatInt floatInt = max(probs);
-                delta[i][t] = floatInt.getMax();
-                deltaIndex[i][t] = floatInt.getArgmax();
+                DoubleInt doubleInt = max(probs);
+                delta[i][t] = doubleInt.getMax();
+                deltaIndex[i][t] = doubleInt.getArgmax();
             }
         }
     }
@@ -62,8 +62,8 @@ public class MainHmm2 extends MainHmm1 {
     /**
      * Return max of array
      */
-    public static FloatInt max(float[] arr){
-        float max = arr[0];
+    public static DoubleInt max(double[] arr){
+        double max = arr[0];
         int argmax = 0;
         for(int i = 1; i < arr.length; i++) {
             if (arr[i] > max) {
@@ -71,7 +71,7 @@ public class MainHmm2 extends MainHmm1 {
                 argmax = i;
             }
         }
-        return new FloatInt(max, argmax);
+        return new DoubleInt(max, argmax);
     }
 
     /**
@@ -79,10 +79,10 @@ public class MainHmm2 extends MainHmm1 {
      */
     public static String findSequence(){
         String seq = "";
-        float maxProb = 0;
+        double maxProb = 0;
         int iMax = -1;
         for (int i = 0; i < A.length; i++) {
-            float tempProb = delta[i][delta[0].length - 1];
+            double tempProb = delta[i][delta[0].length - 1];
             if (tempProb > maxProb) {
                 maxProb = tempProb;
                 iMax = i;
@@ -107,19 +107,19 @@ public class MainHmm2 extends MainHmm1 {
         return backTrack(deltaIndex[i][t], t - 1) + i + " ";
     }
 
-    private static class FloatInt {
-        private float max;
+    private static class DoubleInt {
+        private double max;
         private int argmax;
-        public FloatInt(float max, int argmax) {
+        public DoubleInt(double max, int argmax) {
             this.max = max;
             this.argmax = argmax;
         }
 
-        public float getMax() {
+        public double getMax() {
             return max;
         }
 
-        public void setMax(float max) {
+        public void setMax(double max) {
             this.max = max;
         }
 

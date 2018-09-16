@@ -1,3 +1,5 @@
+// Written by Sahand Zarrinkoub and Shahin Saleh
+
 package hmm0;
 
 import java.io.BufferedReader;
@@ -20,9 +22,9 @@ public class MainHmm0 {
                 //System.out.printf("Got %s as inputEmiss.\n", inputEmiss.toString());
                 //System.out.printf("Got %s as inputPi.\n", inputPi.toString());
 
-                float[][] transM;
-                float[][] emissM;
-                float[][] pi;
+                double[][] transM;
+                double[][] emissM;
+                double[][] pi;
 
                 String[] inputTransElems = inputTrans.split(" ");
                 String[] inputEmissElems = inputEmiss.split(" ");
@@ -44,29 +46,29 @@ public class MainHmm0 {
                 int rowsPi = Integer.parseInt(inputPiElems[0]);
                 int colsPi = Integer.parseInt(inputPiElems[1]);
 
-                transM = new float[rowsTrans][colsTrans];
-                emissM = new float[rowsEmiss][colsEmiss];
-                pi = new float[rowsPi][colsPi];
+                transM = new double[rowsTrans][colsTrans];
+                emissM = new double[rowsEmiss][colsEmiss];
+                pi = new double[rowsPi][colsPi];
 
                 for (int i = 0; i < rowsTrans; i++) {
                     for (int j = 0; j < colsTrans; j++) {
-                        transM[i][j] = Float.parseFloat(inputTransElems[2 + i * colsTrans + j]);
+                        transM[i][j] = Double.parseDouble(inputTransElems[2 + i * colsTrans + j]);
                     }
                 }
 
                 for (int i = 0; i < rowsEmiss; i++) {
                     for (int j = 0; j < colsEmiss; j++) {
-                        emissM[i][j] = Float.parseFloat(inputEmissElems[2 + i * colsEmiss + j]);
+                        emissM[i][j] = Double.parseDouble(inputEmissElems[2 + i * colsEmiss + j]);
                     }
                 }
 
                 for (int i = 0; i < rowsPi; i++) {
                     for (int j = 0; j < colsPi; j++) {
-                        pi[i][j] = Float.parseFloat(inputPiElems[2 + i * colsPi + j]);
+                        pi[i][j] = Double.parseDouble(inputPiElems[2 + i * colsPi + j]);
                     }
                 }
 
-                float[][] res = matrixMul(pi, transM);
+                double[][] res = matrixMul(pi, transM);
                 res = matrixMul(res, emissM);
 
                 DecimalFormat df = new DecimalFormat("#.#");
@@ -89,7 +91,6 @@ public class MainHmm0 {
         try {
             String inputString = br.readLine();
             String[] inputElems = inputString.split(" ");
-            System.out.println(Arrays.toString(inputElems));
             return inputElems;
         } catch(IOException e) {
             e.printStackTrace();
@@ -97,15 +98,15 @@ public class MainHmm0 {
         }
     }
 
-    public static float[][] parseArrayToMatrix(String[] arr) {
+    public static double[][] parseArrayToMatrix(String[] arr) {
         int rows = Integer.parseInt(arr[0]);
         int cols = Integer.parseInt(arr[1]);
 
-        float[][] res = new float[rows][cols];
+        double[][] res = new double[rows][cols];
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                res[i][j] = Float.parseFloat(arr[2 + i * cols + j]);
+                res[i][j] = Double.parseDouble(arr[2 + i * cols + j]);
             }
         }
 
@@ -124,8 +125,8 @@ public class MainHmm0 {
         return res;
     }
 
-    public static float[][] matrixMul(float[][] a, float[][] b) {
-        float[][] res = new float[a.length][b[0].length];
+    public static double[][] matrixMul(double[][] a, double[][] b) {
+        double[][] res = new double[a.length][b[0].length];
         for(int i = 0; i < a.length; i++) {
 
             for(int j = 0; j < b[0].length; j++ ) {

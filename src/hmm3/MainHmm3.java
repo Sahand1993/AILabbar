@@ -8,26 +8,18 @@ import java.lang.Math;
 
 public class MainHmm3 extends MainHmm2 {
 
-    public static float[][] beta; // i, t
-    public static float[][][] digamma; // i, j, t
-    public static float[][] gamma; // i, t
-    public static int maxIters = 100;
-    private static float[] colSums;
-    private static float logProb;
+    public static double[][] beta; // i, t
+    public static double[][][] digamma; // i, j, t
+    public static double[][] gamma; // i, t
+    public static int maxIters = 1000;
+    private static double[] colSums;
+    private static double logProb;
 
     public static void main(String[] args) {
         br = new BufferedReader(new InputStreamReader(System.in));
         readInput();
 
-        estimateParams();
-        float newLogProb = computeLogP();
-        int iters = 0;
-        do {
-            logProb = newLogProb;
-            estimateParams();
-            newLogProb = computeLogP();
-            iters++;
-        } while(iters < maxIters && newLogProb > logProb);
+        fit();
 
         System.out.printf("%d %d ", A.length, A[0].length);
         for (int i = 0; i < A.length; i++) {
@@ -44,8 +36,22 @@ public class MainHmm3 extends MainHmm2 {
         }
     }
 
-    private static float computeLogP() {
-        float logProb = 0;
+    public static void fit(){
+        estimateParams();
+        double newLogProb = computeLogP();
+        int iters = 0;
+        do {
+            //System.out.printf("logProb: %f\n", newLogProb);
+            logProb = newLogProb;
+            estimateParams();
+            newLogProb = computeLogP();
+            iters++;
+        } while(iters < maxIters && newLogProb > logProb);
+        System.out.printf("Stopped after %d iterations.\n", iters);
+    }
+
+    private static double computeLogP() {
+        double logProb = 0;
         for(int i = 0; i < O.length; i++) {
             logProb += Math.log(1 / colSums[i]); // Does it matter which log-base is used?
         }
@@ -62,8 +68,8 @@ public class MainHmm3 extends MainHmm2 {
             pi[0][i] = gamma[i][0];
         }
 
-        float numer;
-        float denom;
+        double numer;
+        double denom;
         for(int i = 0; i < A.length; i++) {
             for(int j = 0; j < A.length; j++) {
                 numer = 0;
@@ -92,10 +98,10 @@ public class MainHmm3 extends MainHmm2 {
     }
 
     public static void fillAlpha() {
-        alpha = new float[A.length][O.length];
-        colSums = new float[O.length];
+        alpha = new double[A.length][O.length];
+        colSums = new double[O.length];
         // First column of alpha
-        float colSum = 0;
+        double colSum = 0;
         for (int i = 0; i < alpha.length; i++) {
             alpha[i][0] = pi[0][i] * B[i][O[0]];
             colSum += alpha[i][0];
@@ -103,8 +109,8 @@ public class MainHmm3 extends MainHmm2 {
         colSums[0] = colSum;
         normalizeCol(alpha, 0, colSum);
 
-        float[][] alphaOld;
-        float[][] newColAlpha = extractColumn(alpha, 0);
+        double[][] alphaOld;
+        double[][] newColAlpha = extractColumn(alpha, 0);
         for (int i = 1; i < O.length; i++) {
             alphaOld = extractColumn(alpha, i - 1);
             newColAlpha = matrixMul(transpose(alphaOld), A);
@@ -120,14 +126,14 @@ public class MainHmm3 extends MainHmm2 {
     }
 
     private static void fillBeta() {
-        beta = new float[A.length][O.length];
+        beta = new double[A.length][O.length];
         // Last col of beta
         for (int i = 0; i < beta.length; i++) {
             beta[i][beta[0].length - 1] = 1 / colSums[O.length - 1];
         }
         for (int t = O.length - 2; t >= 0; t--) {
             for (int i = 0; i < A.length; i++) {
-                float sum = 0;
+                double sum = 0;
                 for (int j = 0; j < A.length; j++) {
                     sum += beta[j][t + 1] * B[j][O[t + 1]] * A[i][j];
                 }
@@ -137,8 +143,8 @@ public class MainHmm3 extends MainHmm2 {
     }
 
     private static void fillGammas() {
-        gamma = new float[A.length][O.length];
-        digamma = new float[A.length][A.length][O.length - 1];
+        gamma = new double[A.length][O.length];
+        digamma = new double[A.length][A.length][O.length - 1];
         for (int t = 0; t < O.length - 1; t++) {
             for (int i = 0; i < A.length; i++) {
                 gamma[i][t] = 0;
@@ -153,7 +159,7 @@ public class MainHmm3 extends MainHmm2 {
         }
     }
 
-    public static void printMatrix(float[][][] m) {
+    public static void printMatrix(double[][][] m) {
         for(int t = 0; t < m[0][0].length; t++) {
             for(int i = 0; i < m.length; i++) {
                 for(int j = 0; j < m[0].length; j++){
@@ -166,13 +172,13 @@ public class MainHmm3 extends MainHmm2 {
         System.out.println();
     }
 
-    private static void normalizeCol(float[][] m, int colNo, float colSum) {
+    private static void normalizeCol(double[][] m, int colNo, double colSum) {
         for (int i = 0; i < m.length; i++) {
             m[i][colNo] /= colSum;
         }
     }
 
-    private static void printCol(float[][] m, int colNo){
+    private static void printCol(double[][] m, int colNo){
         for (int i = 0; i < m.length; i++) {
             System.out.printf("%f\n", m[i][colNo]);
         }
