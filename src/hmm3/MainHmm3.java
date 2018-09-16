@@ -9,11 +9,13 @@ import java.lang.Math;
 public class MainHmm3 extends MainHmm2 {
 
     public static double[][] beta; // i, t
+    public static double[][] alpha;
     public static double[][][] digamma; // i, j, t
     public static double[][] gamma; // i, t
     public static int maxIters = 1000;
-    private static double[] colSums;
-    private static double logProb;
+    public static int iters;
+    public static double[] colSums;
+    public static double logProb;
 
     public static void main(String[] args) {
         br = new BufferedReader(new InputStreamReader(System.in));
@@ -39,7 +41,7 @@ public class MainHmm3 extends MainHmm2 {
     public static void fit(){
         estimateParams();
         double newLogProb = computeLogP();
-        int iters = 0;
+        iters = 0;
         do {
             //System.out.printf("logProb: %f\n", newLogProb);
             logProb = newLogProb;
@@ -50,7 +52,7 @@ public class MainHmm3 extends MainHmm2 {
         System.out.printf("Stopped after %d iterations.\n", iters);
     }
 
-    private static double computeLogP() {
+    public static double computeLogP() {
         double logProb = 0;
         for(int i = 0; i < O.length; i++) {
             logProb += Math.log(1 / colSums[i]); // Does it matter which log-base is used?
@@ -59,7 +61,7 @@ public class MainHmm3 extends MainHmm2 {
         return logProb;
     }
 
-    private static void estimateParams() {
+    public static void estimateParams() {
         fillAlpha();
         fillBeta();
         fillGammas();
