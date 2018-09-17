@@ -12,10 +12,11 @@ public class CPart {
     static MainHmm3 main = new MainHmm3();
     private static final double DEV = 0.2;
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static String dataset = "LARGE";
 
     public static void main(String[] args) {
         question7();
-        question8();
+        //question8();
         question9();
         question10();
     }
@@ -24,15 +25,46 @@ public class CPart {
     }
 
     private static void question8() {
-        int N = 100;
-        /*
-        double[][] totA = new double[3][3];
-        double[][] totB = new double[3][4];
-        double[][] totPi = new double[1][3];
-        */
+        System.out.println("\nQUESTION 8\n");
+        calcErrors(10);
+    }
+
+    private static void question9() {
+        System.out.println("\nQUESTION 9\n");
+        // Let's do a grid search with 1 < N < 10 and M = 4
+        // M must be 4.
+        // Here, it is senseless to compare euclidean distances between A, B and pi matrices, since they will have different dimensions.
+        // Instead, we should focus on the log probability, and making it as large as possible
+
+        int N = 10;
+        int iters = 5;
+        double avgLogProb;
+        for(int n = 1; n <= N; n++) {
+            System.out.printf("N, M: %d, %d\n", n, 4);
+            avgLogProb = avgLogProb(iters, n, 4);
+            System.out.printf("avgLogProb: %f\n\n", avgLogProb);
+        }
+    }
+
+    private static void question10() {
+    }
+
+    private static double avgLogProb(int iters, int n, int m) {
+        double totLogProb = 0;
+        for(int i = 0; i < iters; i++) {
+            totLogProb += trainHMM(n, m);
+        }
+        return totLogProb /= iters;
+    }
+
+    /**
+     * Prints the average of the distances to the generating matrices A, B and pi over iters iterations.
+     * @param iters number of times to train the HMM.
+     */
+    private static void calcErrors(int iters) {
         double[][] realA = new double[][]{{0.7, 0.05, 0.25},
-                                            {0.1, 0.8, 0.1},
-                                            {0.2, 0.3, 0.5}};
+                                          {0.1, 0.8, 0.1},
+                                          {0.2, 0.3, 0.5}};
         double[][] realB = new double[][]{{0.7, 0.2, 0.1, 0.0},
                                           {0.1, 0.4, 0.3, 0.2},
                                           {0.0, 0.1, 0.2, 0.7}};
@@ -41,44 +73,25 @@ public class CPart {
         double avgADist = 0;
         double avgBDist = 0;
         double avgPiDist = 0;
-
-        for( int i = 0; i < N; i++) {
-            trainHMM(3, 4);
+        double avgLogProb = 0;
+        for( int i = 0; i < iters; i++) {
+            avgLogProb += trainHMM(3 , 4);
             double distA = euclDistance(realA, main.A);
             double distB = euclDistance(realB, main.B);
             double distPi = euclDistance(realPi, main.pi);
-            System.out.printf("\nEpoch %d\ntrained until main.pi:\n", i + 1);
-            for(int j = 0; j < main.pi[0].length; j++){
-                System.out.printf("%f ", main.pi[0][j]);
-            }
-            System.out.println();
-            System.out.printf("distPi: %f\n", distPi);
 
             avgADist += distA;
             avgBDist += distB;
             avgPiDist += distPi;
-            /*
-            totA = addMatrices(totA, main.A);
-            totB = addMatrices(totB, main.B);
-            totPi = addMatrices(totPi, main.pi);
-            */
         }
-        avgADist /= N;
-        avgBDist /= N;
-        avgPiDist /= N;
+        avgADist /= iters;
+        avgBDist /= iters;
+        avgPiDist /= iters;
+        avgLogProb /= iters;
 
         System.out.printf("\navgADist = %f, avgBDist = %f, avgPiDist = %f\n", avgADist, avgBDist, avgPiDist);
         System.out.printf("Average distance per element:\nA: %f, B: %f, pi: %f\n", avgADist / (3 * 3), avgBDist / (3 * 4), avgPiDist / 3);
-        /*
-        divideMatrix(totA, N);
-        divideMatrix(totB, N);
-        divideMatrix(totPi, N);
-
-        main.printMatrix(totA);
-        main.printMatrix(totB);
-        main.printMatrix(totPi);
-        */
-
+        System.out.printf("avgLogProb: %f\n", avgLogProb);
     }
 
     private static double euclDistance(double[][] x, double[][] y) {
@@ -110,18 +123,12 @@ public class CPart {
         return res;
     }
 
-    private static void question9() {
-    }
-
-    private static void question10() {
-    }
-
     /**
      *
      * @param N: number of hidden states
      * @param M: number of observation symbols
      */
-    private static void trainHMM(int N, int M) {
+    private static double trainHMM(int N, int M) {
         double[][] pi;
         double[][] A;
         double[][] B;
@@ -140,13 +147,17 @@ public class CPart {
 
         // Read O
         try {
-            br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N1000.in"));
+            if(dataset.equals("SMALL")) {
+                br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N1000.in"));
+            } else if(dataset.equals("LARGE")) {
+                br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N10000.in"));
+            }
         } catch(IOException e) {
             e.printStackTrace();
         }
         readO(main);
 
-        main.fit();
+        return main.fit();
     }
 
     private static void readO(MainHmm3 main) {
