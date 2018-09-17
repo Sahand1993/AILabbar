@@ -11,7 +11,7 @@ public class MainHmm3 extends MainHmm2 {
     public static double[][] beta; // i, t
     public static double[][][] digamma; // i, j, t
     public static double[][] gamma; // i, t
-    public static int maxIters = 1000;
+    public static int maxIters = 500;
     private static double[] colSums;
     private static double logProb;
 
@@ -36,7 +36,7 @@ public class MainHmm3 extends MainHmm2 {
         }
     }
 
-    public static void fit(){
+    public static double fit(){
         estimateParams();
         double newLogProb = computeLogP();
         int iters = 0;
@@ -46,8 +46,9 @@ public class MainHmm3 extends MainHmm2 {
             estimateParams();
             newLogProb = computeLogP();
             iters++;
-        } while(iters < maxIters && newLogProb > logProb);
+        } while(iters < maxIters && (logProb - newLogProb) < -0.00001);
         System.out.printf("Stopped after %d iterations.\n", iters);
+        return newLogProb;
     }
 
     private static double computeLogP() {
