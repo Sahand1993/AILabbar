@@ -22,7 +22,7 @@ public class CPart {
 
     /**
     The algorithm converges. It finished the convergence on iteration 949.
-    The convergence can be interpreted in many ways. The way we interpreted convergence is that...
+    The convergence can be interpreted in many ways. The way we interpreted convergence is when logProb gets close to 0.
 
      */
     private static void question7() {
