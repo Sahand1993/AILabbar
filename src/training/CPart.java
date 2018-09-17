@@ -16,12 +16,31 @@ public class CPart {
 
     public static void main(String[] args) {
         question7();
-        //question8();
+        question8();
         question9();
         question10();
     }
 
+    /**
+    The algorithm converges. It finished the convergence on iteration 949.
+    The convergence can be interpreted in many ways. The way we interpreted convergence is when logProb gets close to 0.
+
+     */
     private static void question7() {
+        main.A = new double[][]{{0.54, 0.26, 0.20}, {0.19, 0.53, 0.28}, {0.22, 0.18, 0.60}};
+        main.B = new double[][]{{0.5, 0.2, 0.11, 0.19}, {0.22, 0.28, 0.23, 0.27}, {0.19, 0.21, 0.15, 0.45}};
+        main.pi = new double[][]{{1, 0, 0}};
+        // Read O
+        try {
+            br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N1000.in"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        readO(main);
+
+        fit();
+        System.out.println(main.iters);
+        main.printMatrix(main.A);
     }
 
     private static void question8() {
@@ -46,9 +65,6 @@ public class CPart {
         }
     }
 
-    private static void question10() {
-    }
-
     private static double avgLogProb(int iters, int n, int m) {
         double totLogProb = 0;
         for(int i = 0; i < iters; i++) {
@@ -63,11 +79,11 @@ public class CPart {
      */
     private static void calcErrors(int iters) {
         double[][] realA = new double[][]{{0.7, 0.05, 0.25},
-                                          {0.1, 0.8, 0.1},
-                                          {0.2, 0.3, 0.5}};
+                {0.1, 0.8, 0.1},
+                {0.2, 0.3, 0.5}};
         double[][] realB = new double[][]{{0.7, 0.2, 0.1, 0.0},
-                                          {0.1, 0.4, 0.3, 0.2},
-                                          {0.0, 0.1, 0.2, 0.7}};
+                {0.1, 0.4, 0.3, 0.2},
+                {0.0, 0.1, 0.2, 0.7}};
         double[][] realPi = new double[][]{{1.0, 0.0, 0.0}};
 
         double avgADist = 0;
@@ -124,6 +140,31 @@ public class CPart {
     }
 
     /**
+     * 1. The algorithm does not converge to the right value when initialized with an uniform distribution.
+     * 2. The algoithm returns NaN when initialized with A = diagonal matrix and pi = {0,0,1}. This is expected because
+     * nothing should happen when there is no transition from the initial state matrix.
+     * 3. If the algorithm is initialized with numbers close to the Real Solution the answer will be further
+     * away than from the beginning.
+     */
+    private static void question10() {
+        main.A = new double[][]{{0.56, 0.24, 0.20}, {0.12, 0.58, 0.30}, {0.22, 0.15, 0.63}};
+        main.B = new double[][]{{0.4, 0.3, 0.11, 0.19}, {0.12, 0.38, 0.23, 0.27}, {0.29, 0.11, 0.15, 0.45}};
+        main.pi = new double[][]{{1, 0, 0}};
+        // Read O
+        try {
+            br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N1000.in"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        readO(main);
+
+        fit();
+        System.out.println(main.iters);
+        main.printMatrix(main.A);
+    }
+
+
+    /**
      *
      * @param N: number of hidden states
      * @param M: number of observation symbols
@@ -159,6 +200,7 @@ public class CPart {
 
         return main.fit();
     }
+
 
     private static void readO(MainHmm3 main) {
         String[] oArr = main.nextLineSplit(br);
@@ -203,6 +245,26 @@ public class CPart {
             }
         }
         return res;
+    }
+
+    public static void fit(){
+        main.estimateParams();
+        double newLogProb = main.computeLogP();
+        main.iters = 0;
+        double diff = 10;
+        do {
+            //System.out.printf("logProb: %f\n", newLogProb);
+            main.logProb = newLogProb;
+            main.estimateParams();
+            newLogProb = main.computeLogP();
+            main.iters++;
+            System.out.println(main.iters);
+            diff = Math.abs(main.logProb - newLogProb);
+            main.printMatrix(main.A);
+            main.printMatrix(main.B);
+            System.out.println(diff);
+        } while(main.iters < main.maxIters && newLogProb > main.logProb && diff > Math.pow(10, -7));
+        System.out.printf("Stopped after %d iterations.\n", main.iters);
     }
 
 

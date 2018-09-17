@@ -11,9 +11,9 @@ public class MainHmm3 extends MainHmm2 {
     public static double[][] beta; // i, t
     public static double[][][] digamma; // i, j, t
     public static double[][] gamma; // i, t
-    public static int maxIters = 500;
-    private static double[] colSums;
-    private static double logProb;
+    public static int maxIters = 1000;
+    public static double[] colSums;
+    public static double logProb;
 
     public static void main(String[] args) {
         br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,7 +51,7 @@ public class MainHmm3 extends MainHmm2 {
         return newLogProb;
     }
 
-    private static double computeLogP() {
+    public static double computeLogP() {
         double logProb = 0;
         for(int i = 0; i < O.length; i++) {
             logProb += Math.log(1 / colSums[i]); // Does it matter which log-base is used?
@@ -60,7 +60,7 @@ public class MainHmm3 extends MainHmm2 {
         return logProb;
     }
 
-    private static void estimateParams() {
+    public static void estimateParams() {
         fillAlpha();
         fillBeta();
         fillGammas();
