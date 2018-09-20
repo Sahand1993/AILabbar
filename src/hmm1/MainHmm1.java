@@ -17,7 +17,6 @@ public class MainHmm1 extends MainHmm0 {
     public static void main(String[] args) {
         br = new BufferedReader(new InputStreamReader(System.in));
         readInput();
-
         fillAlpha();
         //double[][] alpha1 = vectorMul(transpose(pi), extractColumn(B, O[0]));
         //double ans = alpha(A, B, alpha1);
@@ -124,6 +123,4 @@ public class MainHmm1 extends MainHmm0 {
         }
         System.out.println();
     }
-
-
 }

@@ -23,6 +23,7 @@ public class MainHmm2 extends MainHmm1 {
 
     /**
      * Fills delta and deltaIndex matrices with probabilities.
+     * returns most likely final state
      */
     public static void fillDelta(){
         delta = new double[A.length][O.length];
@@ -33,15 +34,12 @@ public class MainHmm2 extends MainHmm1 {
         double[] probs;
         // For each timestep t
         for(int t = 1; t < O.length; t++) {
-      //      System.out.println(t);
             // For each possible state at t
             for(int i = 0; i < A.length; i++) {
-         //       System.out.println(" " + i);
                 probs = new double[A.length];
                 // For each possible state at t - 1
                 for(int j = 0; j < A.length; j++) {
                     probs[j] = delta[j][t - 1] * A[j][i] * B[i][O[t]];
-//                    System.out.printf("  %f * %f * %f = %f\n", delta[j][t - 1], A[j][i], B[i][O[t]], probs[j]);
                 }
                 DoubleInt doubleInt = max(probs);
                 delta[i][t] = doubleInt.getMax();

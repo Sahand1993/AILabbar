@@ -15,10 +15,10 @@ public class CPart {
     private static String dataset = "LARGE";
 
     public static void main(String[] args) {
-        question7();
+        //question7();
         question8();
-        question9();
-        question10();
+        //question9();
+        //question10();
     }
 
     /**
@@ -39,7 +39,6 @@ public class CPart {
         readO(main);
 
         fit();
-        System.out.println(main.iters);
         main.printMatrix(main.A);
     }
 
@@ -63,6 +62,29 @@ public class CPart {
             avgLogProb = avgLogProb(iters, n, 4);
             System.out.printf("avgLogProb: %f\n\n", avgLogProb);
         }
+    }
+
+    /**
+     * 1. The algorithm does not converge to the right value when initialized with an uniform distribution.
+     * 2. The algoithm returns NaN when initialized with A = diagonal matrix and pi = {0,0,1}. This is expected because
+     * nothing should happen when there is no transition from the initial state matrix.
+     * 3. If the algorithm is initialized with numbers close to the Real Solution the answer will be further
+     * away than from the beginning.
+     */
+    private static void question10() {
+        main.A = new double[][]{{0.56, 0.24, 0.20}, {0.12, 0.58, 0.30}, {0.22, 0.15, 0.63}};
+        main.B = new double[][]{{0.4, 0.3, 0.11, 0.19}, {0.12, 0.38, 0.23, 0.27}, {0.29, 0.11, 0.15, 0.45}};
+        main.pi = new double[][]{{1, 0, 0}};
+        // Read O
+        try {
+            br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N1000.in"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        readO(main);
+
+        fit();
+        main.printMatrix(main.A);
     }
 
     private static double avgLogProb(int iters, int n, int m) {
@@ -137,30 +159,6 @@ public class CPart {
             }
         }
         return res;
-    }
-
-    /**
-     * 1. The algorithm does not converge to the right value when initialized with an uniform distribution.
-     * 2. The algoithm returns NaN when initialized with A = diagonal matrix and pi = {0,0,1}. This is expected because
-     * nothing should happen when there is no transition from the initial state matrix.
-     * 3. If the algorithm is initialized with numbers close to the Real Solution the answer will be further
-     * away than from the beginning.
-     */
-    private static void question10() {
-        main.A = new double[][]{{0.56, 0.24, 0.20}, {0.12, 0.58, 0.30}, {0.22, 0.15, 0.63}};
-        main.B = new double[][]{{0.4, 0.3, 0.11, 0.19}, {0.12, 0.38, 0.23, 0.27}, {0.29, 0.11, 0.15, 0.45}};
-        main.pi = new double[][]{{1, 0, 0}};
-        // Read O
-        try {
-            br = new BufferedReader(new FileReader("src/training/samples/hmm_c_N1000.in"));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        readO(main);
-
-        fit();
-        System.out.println(main.iters);
-        main.printMatrix(main.A);
     }
 
 
@@ -250,21 +248,21 @@ public class CPart {
     public static void fit(){
         main.estimateParams();
         double newLogProb = main.computeLogP();
-        main.iters = 0;
+        int iters = 0;
         double diff = 10;
         do {
             //System.out.printf("logProb: %f\n", newLogProb);
             main.logProb = newLogProb;
             main.estimateParams();
             newLogProb = main.computeLogP();
-            main.iters++;
-            System.out.println(main.iters);
+            iters++;
+            System.out.println(iters);
             diff = Math.abs(main.logProb - newLogProb);
             main.printMatrix(main.A);
             main.printMatrix(main.B);
             System.out.println(diff);
-        } while(main.iters < main.maxIters && newLogProb > main.logProb && diff > Math.pow(10, -7));
-        System.out.printf("Stopped after %d iterations.\n", main.iters);
+        } while(iters < main.maxIters && newLogProb > main.logProb && diff > Math.pow(10, -7));
+        System.out.printf("Stopped after %d iterations.\n", iters);
     }
 
 
